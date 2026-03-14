@@ -25,10 +25,3 @@ app.get('/', (req, res) => {
 app.use(errorHandler);
 
 module.exports = app;
-```
-
-Save it, then push:
-```
-git add .
-git commit -m "add root route"
-git push
