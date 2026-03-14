@@ -34,6 +34,8 @@ To get a token, register or log in via the `/api/auth` endpoints.
 | [API Reference](docs/api-reference.md) | Full endpoint reference |
 | [Authentication](docs/authentication.md) | How JWT authentication works |
 | [Postman Collection](postman/payrail-api.postman_collection.json) | Import into Postman to test all endpoints |
+| [Payment Workflow](docs/payment-workflow.md) | End-to-end payment flow and architecture |
+```
 
 
 ## Running Locally
