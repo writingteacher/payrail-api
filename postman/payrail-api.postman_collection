@@ -507,8 +507,28 @@
         {
           "name": "List All Transactions",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "transactions"
+              ]
+            }
           },
           "response": []
         },
@@ -664,8 +684,35 @@
         {
           "name": "Retrieve a Refund",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/refunds/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "refunds",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
           },
           "response": []
         },
@@ -743,12 +790,12 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": ""
+      "value": "",
+      "description": "baseUrl"
     },
     {
       "key": "token",
-      "value": "",
-      "type": "default"
+      "value": ""
     }
   ]
 }
