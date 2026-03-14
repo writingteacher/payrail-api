@@ -578,7 +578,7 @@ Idempotency-Key: <unique-key>
 ```
 
 > **Note:** The `Idempotency-Key` header is required for all `POST` requests to `/api/transactions`. If a request is retried with the same key, the API returns the original response rather than creating a duplicate transaction. Use a UUID or other unique string.
-```
+
 
 **Request body**
 
@@ -781,7 +781,7 @@ Idempotency-Key: <unique-key>
 ```
 
 > **Note:** The `Idempotency-Key` header is required for all `POST` requests to `/api/refunds`. If a request is retried with the same key, the API returns the original response rather than creating a duplicate refund. Use a UUID or other unique string.
-```
+
 
 **Request body**
 
