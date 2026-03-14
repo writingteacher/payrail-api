@@ -1,5 +1,42 @@
 # Payrail API Reference
 
+## HTTP status codes
+
+Payrail uses standard HTTP status codes to indicate the success or failure of a request.
+
+| Code | Status | Description |
+|------|--------|-------------|
+| 200 | OK | The request was successful |
+| 201 | Created | A new resource was successfully created |
+| 400 | Bad Request | The request was malformed or missing required fields |
+| 401 | Unauthorized | Missing or invalid authentication token |
+| 404 | Not Found | The requested resource does not exist |
+| 500 | Internal Server Error | An unexpected error occurred on the server |
+
+## Error responses
+
+All errors return a JSON object with a `message` field describing the error.
+
+**Example error response**
+```json
+{
+    "message": "Customer not found"
+}
+```
+
+| Error message | Status code | Cause |
+|---------------|-------------|-------|
+| `Authentication required` | 401 | Missing or invalid JWT token |
+| `Email already registered` | 400 | Registration attempted with an existing email |
+| `Invalid credentials` | 400 | Login attempted with wrong email or password |
+| `Customer not found` | 404 | No customer matches the provided ID |
+| `Payment method not found` | 404 | No payment method matches the provided ID |
+| `Transaction not found` | 404 | No transaction matches the provided ID |
+| `Refund not found` | 404 | No refund matches the provided ID |
+| `Internal Server Error` | 500 | Unexpected server error |
+
+---
+
 ## Authentication
 
 All endpoints except `/api/auth/register` and `/api/auth/login` require a valid JWT token in the request header.
