@@ -17,6 +17,18 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/payment-methods', paymentMethodRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/refunds', refundRoutes);
+
+app.get('/', (req, res) => {
+    res.json({ message: 'Welcome to Payrail API', version: '1.0.0' });
+});
+
 app.use(errorHandler);
 
 module.exports = app;
+```
+
+Save it, then push:
+```
+git add .
+git commit -m "add root route"
+git push
