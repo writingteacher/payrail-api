@@ -337,7 +337,6 @@ POST /api/payment-methods
 
 ```
 Authorization: Bearer <token>
-```
 
 **Request body**
 
@@ -359,6 +358,7 @@ Authorization: Bearer <token>
     "expiryDate": "12/28",
     "isDefault": true
 }
+
 ```
 
 **Example response**
