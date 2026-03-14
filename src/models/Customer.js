@@ -17,6 +17,10 @@ const customerSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    password: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
