@@ -32,6 +32,6 @@ const transactionSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-});
+}, { strict: true });
 
 module.exports = mongoose.model('Transaction', transactionSchema);
