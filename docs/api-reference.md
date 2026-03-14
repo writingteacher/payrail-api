@@ -192,6 +192,7 @@ GET /api/customers
 ```
 Authorization: Bearer <token>
 ```
+> **Note:** Password fields are never returned in any customer response.
 
 **Example response**
 ```json
@@ -344,7 +345,7 @@ Authorization: Bearer <token>
 |-------|------|----------|-------------|
 | customer | string | Yes | The customer's unique ID |
 | type | string | Yes | Payment type — `card` or `bank_account` |
-| last4 | string | Yes | Last 4 digits of the card or account |
+| last4 | string | Yes | Last 4 digits of the card or account number. For display purposes only — full card numbers are never stored |
 | expiryDate | string | No | Expiry date in MM/YY format |
 | isDefault | boolean | No | Set as default payment method |
 
@@ -542,6 +543,25 @@ Authorization: Bearer <token>
 
 ## Transactions
 
+## Transaction status lifecycle
+
+Transaction statuses are system-driven and follow a strict lifecycle. Statuses cannot be set arbitrarily — they reflect the actual state of the payment.
+```
+pending → completed   (successful payment)
+pending → failed      (bank decline)
+completed → refunded  (full refund processed)
+```
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Transaction has been created and is awaiting processing |
+| `completed` | Payment was successfully processed |
+| `failed` | Payment was declined by the bank |
+| `refunded` | Payment has been fully refunded |
+
+> **Note:** The `PUT /api/transactions/:id` endpoint is intended for system use only. In production, transaction statuses are updated automatically by the payment processor.
+
+
 ### Create a transaction
 
 Creates a new payment transaction.
@@ -554,6 +574,10 @@ POST /api/transactions
 **Headers**
 ```
 Authorization: Bearer <token>
+Idempotency-Key: <unique-key>
+```
+
+> **Note:** The `Idempotency-Key` header is required for all `POST` requests to `/api/transactions`. If a request is retried with the same key, the API returns the original response rather than creating a duplicate transaction. Use a UUID or other unique string.
 ```
 
 **Request body**
@@ -563,7 +587,7 @@ Authorization: Bearer <token>
 | customer | string | Yes | The customer's unique ID |
 | paymentMethod | string | Yes | The payment method's unique ID |
 | amount | number | Yes | Transaction amount |
-| currency | string | No | Currency code — defaults to `USD` |
+| currency | string | No | 3-letter ISO 4217 currency code (e.g., USD, EUR, GBP). Defaults to USD. |
 | status | string | No | Transaction status — `pending`, `completed`, or `failed` |
 | description | string | No | Description of the transaction |
 
@@ -572,7 +596,7 @@ Authorization: Bearer <token>
 {
     "customer": "69b5330a4314418540e8676e",
     "paymentMethod": "69b53559c707c55a4e351409",
-    "amount": 150.00,
+    "amount": 15000,
     "currency": "USD",
     "status": "completed",
     "description": "Payment for services"
@@ -585,7 +609,7 @@ Authorization: Bearer <token>
     "_id": "69b536d0bcfe7db4d09c1403",
     "customer": "69b5330a4314418540e8676e",
     "paymentMethod": "69b53559c707c55a4e351409",
-    "amount": 150,
+    "amount": 15000,
     "currency": "USD",
     "status": "completed",
     "description": "Payment for services",
@@ -608,6 +632,17 @@ GET /api/transactions
 ```
 Authorization: Bearer <token>
 ```
+**Query parameters**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| limit | integer | No | Number of transactions to return. Defaults to 10, maximum 100. |
+| offset | integer | No | Number of transactions to skip. Use for pagination. |
+
+**Example request**
+```
+GET /api/transactions?limit=10&offset=0
+```
 
 **Example response**
 ```json
@@ -624,7 +659,7 @@ Authorization: Bearer <token>
             "type": "card",
             "last4": "4242"
         },
-        "amount": 150,
+        "amount": 15000,
         "currency": "USD",
         "status": "completed",
         "description": "Payment for services",
@@ -669,7 +704,7 @@ Authorization: Bearer <token>
         "type": "card",
         "last4": "4242"
     },
-    "amount": 150,
+    "amount": 15000,
     "currency": "USD",
     "status": "completed",
     "description": "Payment for services",
@@ -719,7 +754,7 @@ Authorization: Bearer <token>
     "_id": "69b536d0bcfe7db4d09c1403",
     "customer": "69b5330a4314418540e8676e",
     "paymentMethod": "69b53559c707c55a4e351409",
-    "amount": 150,
+    "amount": 15000,
     "currency": "USD",
     "status": "failed",
     "description": "Payment for services",
@@ -742,6 +777,10 @@ POST /api/refunds
 **Headers**
 ```
 Authorization: Bearer <token>
+Idempotency-Key: <unique-key>
+```
+
+> **Note:** The `Idempotency-Key` header is required for all `POST` requests to `/api/refunds`. If a request is retried with the same key, the API returns the original response rather than creating a duplicate refund. Use a UUID or other unique string.
 ```
 
 **Request body**
@@ -759,7 +798,7 @@ Authorization: Bearer <token>
 {
     "customer": "69b5330a4314418540e8676e",
     "transaction": "69b536d0bcfe7db4d09c1403",
-    "amount": 150.00,
+    "amount": 15000,
     "reason": "Customer requested refund",
     "status": "pending"
 }
@@ -771,7 +810,7 @@ Authorization: Bearer <token>
     "_id": "69b537548386681aea83bfd2",
     "customer": "69b5330a4314418540e8676e",
     "transaction": "69b536d0bcfe7db4d09c1403",
-    "amount": 150,
+    "amount": 15000,
     "reason": "Customer requested refund",
     "status": "pending",
     "createdAt": "2026-03-14T10:24:20.638Z"
@@ -793,6 +832,17 @@ GET /api/refunds
 ```
 Authorization: Bearer <token>
 ```
+**Query parameters**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| limit | integer | No | Number of refunds to return. Defaults to 10, maximum 100. |
+| offset | integer | No | Number of refunds to skip. Use for pagination. |
+
+**Example request**
+```
+GET /api/refunds?limit=10&offset=0
+```
 
 **Example response**
 ```json
@@ -806,10 +856,10 @@ Authorization: Bearer <token>
         },
         "transaction": {
             "_id": "69b536d0bcfe7db4d09c1403",
-            "amount": 150,
+            "amount": 15000,
             "status": "completed"
         },
-        "amount": 150,
+        "amount": 15000,
         "reason": "Customer requested refund",
         "status": "pending",
         "createdAt": "2026-03-14T10:24:20.638Z"
@@ -850,10 +900,10 @@ Authorization: Bearer <token>
     },
     "transaction": {
         "_id": "69b536d0bcfe7db4d09c1403",
-        "amount": 150,
+        "amount": 15000,
         "status": "completed"
     },
-    "amount": 150,
+    "amount": 15000,
     "reason": "Customer requested refund",
     "status": "pending",
     "createdAt": "2026-03-14T10:24:20.638Z"
@@ -902,7 +952,7 @@ Authorization: Bearer <token>
     "_id": "69b537548386681aea83bfd2",
     "customer": "69b5330a4314418540e8676e",
     "transaction": "69b536d0bcfe7db4d09c1403",
-    "amount": 150,
+    "amount": 15000,
     "reason": "Customer requested refund",
     "status": "processed",
     "createdAt": "2026-03-14T10:24:20.638Z"

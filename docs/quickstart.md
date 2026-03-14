@@ -93,7 +93,7 @@ Authorization: Bearer <token>
 {
     "customer": "69b5330a4314418540e8676e",
     "paymentMethod": "69b53559c707c55a4e351409",
-    "amount": 150.00,
+    "amount": 15000,
     "currency": "USD",
     "description": "Payment for services"
 }
@@ -105,7 +105,7 @@ Authorization: Bearer <token>
     "_id": "69b536d0bcfe7db4d09c1403",
     "customer": "69b5330a4314418540e8676e",
     "paymentMethod": "69b53559c707c55a4e351409",
-    "amount": 150,
+    "amount": 15000,
     "currency": "USD",
     "status": "pending",
     "description": "Payment for services",
@@ -128,7 +128,7 @@ Authorization: Bearer <token>
 {
     "customer": "69b5330a4314418540e8676e",
     "transaction": "69b536d0bcfe7db4d09c1403",
-    "amount": 150.00,
+    "amount": 15000,
     "reason": "Customer requested refund"
 }
 ```
@@ -139,7 +139,7 @@ Authorization: Bearer <token>
     "_id": "69b537548386681aea83bfd2",
     "customer": "69b5330a4314418540e8676e",
     "transaction": "69b536d0bcfe7db4d09c1403",
-    "amount": 150,
+    "amount": 15000,
     "reason": "Customer requested refund",
     "status": "pending",
     "createdAt": "2026-03-14T10:24:20.638Z"
