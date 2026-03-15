@@ -3,6 +3,7 @@
 A fintech payments REST API built with Node.js, Express, and MongoDB. Payrail enables developers to manage customers, payment methods, transactions, and refunds through a secure, JWT-authenticated API.
 
 **Live API:** https://payrail-api.onrender.com
+**Documentation:** https://writingteacher.github.io/payrail-docs/
 
 ---
 
