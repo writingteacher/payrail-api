@@ -371,6 +371,7 @@ Authorization: Bearer <token>
     "message": "Customer deleted"
 }
 ```
+---
 
 ## Payment Methods
 
