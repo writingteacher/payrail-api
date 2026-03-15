@@ -66,6 +66,8 @@ curl -X POST https://payrail-api.onrender.com/api/auth/register \
 | [Versioning](docs/versioning.md) | Version policy and changelog |
 | [API Reference](docs/api-reference.md) | Full endpoint reference |
 | [Postman Collection](postman/payrail-api.postman_collection.json) | Import into Postman to test all endpoints |
+| [Tutorial: Process Your First Payment](docs/tutorials/process-first-payment.md) | End-to-end payment walkthrough |
+| [Tutorial: Handle a Failed Transaction](docs/tutorials/handle-failed-transaction.md) | Detect, understand, and retry failed payments |
 
 ---
 
