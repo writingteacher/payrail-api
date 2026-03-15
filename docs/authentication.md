@@ -2,6 +2,8 @@
 
 Payrail uses JSON Web Tokens (JWT) to authenticate requests. Every request to a protected endpoint must include a valid token in the `Authorization` header.
 
+> **Note:** Password fields are never returned in any API response, including registration and login.
+
 ---
 
 ## How it works

@@ -13,6 +13,7 @@ You will need:
 - A REST client such as [Postman](https://www.postman.com) or curl
 - A Payrail account (created via the Register endpoint)
 - A JWT token (returned on registration and login)
+- The [Swagger Interactive Docs](https://editor.swagger.io/?url=https://raw.githubusercontent.com/writingteacher/payrail-api/master/openapi.yaml) to test endpoints in your browser without Postman
 
 ---
 
