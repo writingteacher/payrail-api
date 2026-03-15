@@ -15,25 +15,52 @@ Payrail uses standard HTTP status codes to indicate the success or failure of a 
 
 ## Error responses
 
-All errors return a JSON object with a `message` field describing the error.
-
-**Example error response**
+All errors return a JSON object with the following structure:
 ```json
 {
-    "message": "Customer not found"
+    "error": {
+        "type": "invalid_request",
+        "code": "invalid_account_number",
+        "message": "A human-readable description of the error"
+    }
 }
 ```
 
-| Error message | Status code | Cause |
-|---------------|-------------|-------|
-| `Authentication required` | 401 | Missing or invalid JWT token |
-| `Email already registered` | 400 | Registration attempted with an existing email |
-| `Invalid credentials` | 400 | Login attempted with wrong email or password |
-| `Customer not found` | 404 | No customer matches the provided ID |
-| `Payment method not found` | 404 | No payment method matches the provided ID |
-| `Transaction not found` | 404 | No transaction matches the provided ID |
-| `Refund not found` | 404 | No refund matches the provided ID |
-| `Internal Server Error` | 500 | Unexpected server error |
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | string | Error category — see error types below |
+| `code` | string | Machine-readable error code |
+| `message` | string | Human-readable description of the error |
+
+---
+
+### Error types
+
+| Type | Description |
+|------|-------------|
+| `invalid_request` | The request was malformed or missing required fields |
+| `authentication_error` | Missing or invalid JWT token |
+| `not_found` | The requested resource does not exist |
+| `conflict` | Idempotency key conflict — request already processed |
+| `rate_limit_error` | Too many requests — slow down and retry |
+| `api_error` | An unexpected error occurred on the server |
+
+---
+
+### Error codes
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `authentication_required` | 401 | Missing or invalid JWT token |
+| `email_already_registered` | 400 | Registration attempted with an existing email |
+| `invalid_credentials` | 400 | Login attempted with wrong email or password |
+| `customer_not_found` | 404 | No customer matches the provided ID |
+| `payment_method_not_found` | 404 | No payment method matches the provided ID |
+| `transaction_not_found` | 404 | No transaction matches the provided ID |
+| `refund_not_found` | 404 | No refund matches the provided ID |
+| `idempotency_conflict` | 409 | Request already processed with this idempotency key |
+| `rate_limit_exceeded` | 429 | Too many requests |
+| `internal_server_error` | 500 | Unexpected server error |
 
 ---
 
