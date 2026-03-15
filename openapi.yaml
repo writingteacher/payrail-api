@@ -1,0 +1,799 @@
+openapi: 3.0.3
+info:
+  title: Payrail API
+  description: A fintech payments REST API for managing customers, payment methods, transactions, and refunds.
+  version: 1.0.0
+  contact:
+    name: Payrail API Support
+    url: https://github.com/writingteacher/payrail-api
+
+servers:
+  - url: https://payrail-api.onrender.com
+    description: Production server
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Auth
+    description: Register and log in
+  - name: Customers
+    description: Manage customer profiles
+  - name: Payment Methods
+    description: Manage cards and bank accounts
+  - name: Transactions
+    description: Process and track payments
+  - name: Refunds
+    description: Manage refund requests
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Customer:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 69b5330a4314418540e8676e
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john@example.com
+        phone:
+          type: string
+          example: 555-1234
+        createdAt:
+          type: string
+          format: date-time
+          example: 2026-03-14T10:06:02.079Z
+
+    PaymentMethod:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 69b53559c707c55a4e351409
+        customer:
+          type: string
+          example: 69b5330a4314418540e8676e
+        type:
+          type: string
+          enum: [card, bank_account]
+          example: card
+        last4:
+          type: string
+          example: "4242"
+        expiryDate:
+          type: string
+          example: 12/28
+        isDefault:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: 2026-03-14T10:15:53.050Z
+
+    Transaction:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 69b536d0bcfe7db4d09c1403
+        customer:
+          type: string
+          example: 69b5330a4314418540e8676e
+        paymentMethod:
+          type: string
+          example: 69b53559c707c55a4e351409
+        amount:
+          type: integer
+          example: 15000
+          description: Amount in minor units (e.g. 15000 = $150.00)
+        currency:
+          type: string
+          example: USD
+          description: 3-letter ISO 4217 currency code
+        status:
+          type: string
+          enum: [pending, completed, failed, refunded]
+          example: completed
+        description:
+          type: string
+          example: Payment for services
+        createdAt:
+          type: string
+          format: date-time
+          example: 2026-03-14T10:22:08.804Z
+
+    Refund:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 69b537548386681aea83bfd2
+        customer:
+          type: string
+          example: 69b5330a4314418540e8676e
+        transaction:
+          type: string
+          example: 69b536d0bcfe7db4d09c1403
+        amount:
+          type: integer
+          example: 15000
+          description: Refund amount in minor units (e.g. 15000 = $150.00)
+        reason:
+          type: string
+          example: Customer requested refund
+        status:
+          type: string
+          enum: [pending, processed, rejected]
+          example: pending
+        createdAt:
+          type: string
+          format: date-time
+          example: 2026-03-14T10:24:20.638Z
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            type:
+              type: string
+              example: invalid_request
+            code:
+              type: string
+              example: customer_not_found
+            message:
+              type: string
+              example: Customer not found
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a customer
+      description: Creates a new customer account and returns a JWT token.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: john@example.com
+                phone:
+                  type: string
+                  example: 555-1234
+                password:
+                  type: string
+                  example: password123
+      responses:
+        '201':
+          description: Customer registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  customer:
+                    $ref: '#/components/schemas/Customer'
+        '400':
+          description: Email already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Log in
+      description: Authenticates a customer and returns a JWT token.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: john@example.com
+                password:
+                  type: string
+                  example: password123
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  customer:
+                    $ref: '#/components/schemas/Customer'
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/customers:
+    post:
+      tags: [Customers]
+      summary: Create a customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                  example: Jane Doe
+                email:
+                  type: string
+                  example: jane@example.com
+                phone:
+                  type: string
+                  example: 555-5678
+                password:
+                  type: string
+                  example: password123
+      responses:
+        '201':
+          description: Customer created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags: [Customers]
+      summary: List all customers
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/customers/{id}:
+    get:
+      tags: [Customers]
+      summary: Retrieve a customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags: [Customers]
+      summary: Update a customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: Customer updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags: [Customers]
+      summary: Delete a customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Customer deleted
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/payment-methods:
+    post:
+      tags: [Payment Methods]
+      summary: Create a payment method
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer, type, last4]
+              properties:
+                customer:
+                  type: string
+                  example: 69b5330a4314418540e8676e
+                type:
+                  type: string
+                  enum: [card, bank_account]
+                  example: card
+                last4:
+                  type: string
+                  example: "4242"
+                expiryDate:
+                  type: string
+                  example: 12/28
+                isDefault:
+                  type: boolean
+                  example: true
+      responses:
+        '201':
+          description: Payment method created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags: [Payment Methods]
+      summary: List all payment methods
+      responses:
+        '200':
+          description: List of payment methods
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentMethod'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/payment-methods/{id}:
+    get:
+      tags: [Payment Methods]
+      summary: Retrieve a payment method
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment method found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+        '404':
+          description: Payment method not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags: [Payment Methods]
+      summary: Update a payment method
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isDefault:
+                  type: boolean
+                expiryDate:
+                  type: string
+      responses:
+        '200':
+          description: Payment method updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+        '404':
+          description: Payment method not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags: [Payment Methods]
+      summary: Delete a payment method
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment method deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Payment method deleted
+        '404':
+          description: Payment method not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/transactions:
+    post:
+      tags: [Transactions]
+      summary: Create a transaction
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Unique key to prevent duplicate charges
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer, paymentMethod, amount, currency]
+              properties:
+                customer:
+                  type: string
+                  example: 69b5330a4314418540e8676e
+                paymentMethod:
+                  type: string
+                  example: 69b53559c707c55a4e351409
+                amount:
+                  type: integer
+                  example: 15000
+                  description: Amount in minor units (e.g. 15000 = $150.00)
+                currency:
+                  type: string
+                  example: USD
+                  description: 3-letter ISO 4217 currency code
+                description:
+                  type: string
+                  example: Payment for services
+      responses:
+        '201':
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags: [Transactions]
+      summary: List all transactions
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Number of transactions to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: Number of transactions to skip
+      responses:
+        '200':
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/transactions/{id}:
+    get:
+      tags: [Transactions]
+      summary: Retrieve a transaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transaction found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags: [Transactions]
+      summary: Update a transaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, completed, failed, refunded]
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Transaction updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/refunds:
+    post:
+      tags: [Refunds]
+      summary: Create a refund
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Unique key to prevent duplicate refunds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer, transaction, amount]
+              properties:
+                customer:
+                  type: string
+                  example: 69b5330a4314418540e8676e
+                transaction:
+                  type: string
+                  example: 69b536d0bcfe7db4d09c1403
+                amount:
+                  type: integer
+                  example: 15000
+                  description: Refund amount in minor units (e.g. 15000 = $150.00)
+                reason:
+                  type: string
+                  example: Customer requested refund
+      responses:
+        '201':
+          description: Refund created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags: [Refunds]
+      summary: List all refunds
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Number of refunds to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: Number of refunds to skip
+      responses:
+        '200':
+          description: List of refunds
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Refund'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/refunds/{id}:
+    get:
+      tags: [Refunds]
+      summary: Retrieve a refund
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Refund found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '404':
+          description: Refund not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags: [Refunds]
+      summary: Update a refund
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, processed, rejected]
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Refund updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '404':
+          description: Refund not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

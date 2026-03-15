@@ -71,6 +71,7 @@ curl -X POST https://payrail-api.onrender.com/api/auth/register \
 | [Postman Collection](postman/payrail-api.postman_collection.json) | Import into Postman to test all endpoints |
 | [Postman Environment](postman/payrail-api.postman_environment.json) | Import into Postman for pre-configured variables |
 | [FAQ](docs/faq.md) | Frequently asked questions |
+| [OpenAPI Spec](openapi.yaml) | Machine-readable API specification |
 
 ---
 
