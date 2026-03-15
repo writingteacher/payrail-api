@@ -371,10 +371,6 @@ Authorization: Bearer <token>
     "message": "Customer deleted"
 }
 ```
-Now paste the Payment Methods section below the Customers section:
-
-```markdown
----
 
 ## Payment Methods
 
