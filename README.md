@@ -38,6 +38,7 @@ To get a token, register or log in via the `/api/auth` endpoints.
 | [Webhooks](docs/webhooks.md) | Real-time event notifications |
 | [Data Models](docs/data-models.md) | Object definitions for all resources |
 | [Versioning](docs/versioning.md) | Version policy and changelog |
+| [Code Examples](docs/code-examples.md) | curl, JavaScript, and Python examples |
 ```
 
 
