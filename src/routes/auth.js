@@ -15,7 +15,9 @@ router.post('/register', async (req, res, next) => {
         await customer.save();
 
         const token = jwt.sign({ id: customer._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.status(201).json({ token, customer });
+        const customerResponse = customer.toObject();
+delete customerResponse.password;
+res.status(201).json({ token, customer: customerResponse });
     } catch (error) {
         next(error);
     }
@@ -31,7 +33,9 @@ router.post('/login', async (req, res, next) => {
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
         const token = jwt.sign({ id: customer._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.status(200).json({ token, customer });
+        const customerResponse = customer.toObject();
+delete customerResponse.password;
+res.status(200).json({ token, customer: customerResponse });
     } catch (error) {
         next(error);
     }
