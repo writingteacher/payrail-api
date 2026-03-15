@@ -70,6 +70,7 @@ curl -X POST https://payrail-api.onrender.com/api/auth/register \
 | [Tutorial: Handle a Failed Transaction](docs/tutorials/handle-failed-transaction.md) | Detect, understand, and retry failed payments |
 | [Postman Collection](postman/payrail-api.postman_collection.json) | Import into Postman to test all endpoints |
 | [Postman Environment](postman/payrail-api.postman_environment.json) | Import into Postman for pre-configured variables |
+| [FAQ](docs/faq.md) | Frequently asked questions |
 
 ---
 
