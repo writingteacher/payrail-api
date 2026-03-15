@@ -13,6 +13,34 @@ Payrail uses standard HTTP status codes to indicate the success or failure of a 
 | 404 | Not Found | The requested resource does not exist |
 | 500 | Internal Server Error | An unexpected error occurred on the server |
 
+## Rate limiting
+
+Payrail enforces rate limits to ensure availability for all users.
+
+| Plan | Limit |
+|------|-------|
+| Free | 100 requests per 15 minutes |
+| Pro | 1,000 requests per 15 minutes |
+
+When you exceed the rate limit the API returns a `429 Too Many Requests` response:
+```json
+{
+    "error": {
+        "type": "rate_limit_error",
+        "code": "rate_limit_exceeded",
+        "message": "Too many requests. Please slow down and try again in 15 minutes."
+    }
+}
+```
+
+### Best practices
+
+- Cache responses where possible to reduce API calls
+- Implement exponential backoff when retrying requests
+- Use webhooks instead of polling to reduce request volume
+
+---
+
 ## Error responses
 
 All errors return a JSON object with the following structure:
