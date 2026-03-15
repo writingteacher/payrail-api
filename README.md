@@ -1,20 +1,45 @@
 # Payrail API
 
-A fintech payments API built with Node.js, Express, and MongoDB. Payrail enables developers to manage customers, payment methods, transactions, and refunds through a secure REST API authenticated with JSON Web Tokens (JWT).
+A fintech payments REST API built with Node.js, Express, and MongoDB. Payrail enables developers to manage customers, payment methods, transactions, and refunds through a secure, JWT-authenticated API.
+
+**Live API:** https://payrail-api.onrender.com
+
+---
+
+## Overview
+
+Payrail is a portfolio project built to demonstrate fintech API design and documentation. It follows industry best practices including:
+
+- JWT bearer token authentication
+- Amounts stored in minor units (cents) to avoid floating point errors
+- Idempotency keys to prevent duplicate charges
+- ISO 4217 currency codes
+- Structured error responses with error types and codes
+- Asynchronous transaction processing with status lifecycle management
+
+---
 
 ## Base URL
 ```
 https://payrail-api.onrender.com
 ```
 
-## Authentication
+---
 
-Payrail uses JWT bearer tokens. Include the token in the `Authorization` header of every request.
-```
-Authorization: Bearer <token>
+## Quick Example
+
+Register and make your first API call in under a minute:
+```bash
+curl -X POST https://payrail-api.onrender.com/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123"
+  }'
 ```
 
-To get a token, register or log in via the `/api/auth` endpoints.
+---
 
 ## Resources
 
@@ -26,21 +51,35 @@ To get a token, register or log in via the `/api/auth` endpoints.
 | Transactions | `/api/transactions` | Process and track payments |
 | Refunds | `/api/refunds` | Manage refund requests |
 
+---
+
 ## Documentation
 
 | Guide | Description |
 |-------|-------------|
 | [Quickstart](docs/quickstart.md) | Get up and running in minutes |
-| [API Reference](docs/api-reference.md) | Full endpoint reference |
 | [Authentication](docs/authentication.md) | How JWT authentication works |
-| [Postman Collection](postman/payrail-api.postman_collection.json) | Import into Postman to test all endpoints |
 | [Payment Workflow](docs/payment-workflow.md) | End-to-end payment flow and architecture |
 | [Webhooks](docs/webhooks.md) | Real-time event notifications |
 | [Data Models](docs/data-models.md) | Object definitions for all resources |
-| [Versioning](docs/versioning.md) | Version policy and changelog |
 | [Code Examples](docs/code-examples.md) | curl, JavaScript, and Python examples |
-```
+| [Versioning](docs/versioning.md) | Version policy and changelog |
+| [API Reference](docs/api-reference.md) | Full endpoint reference |
+| [Postman Collection](postman/payrail-api.postman_collection.json) | Import into Postman to test all endpoints |
 
+---
+
+## Stack
+
+| Layer | Technology |
+|-------|------------|
+| Runtime | Node.js |
+| Framework | Express |
+| Database | MongoDB Atlas |
+| Authentication | JSON Web Tokens (JWT) |
+| Deployment | Render |
+
+---
 
 ## Running Locally
 
@@ -50,27 +89,49 @@ To get a token, register or log in via the `/api/auth` endpoints.
 
 ### Setup
 
-1. Clone the repository
-```
+**1. Clone the repository**
+```bash
 git clone https://github.com/writingteacher/payrail-api.git
 cd payrail-api
 ```
 
-2. Install dependencies
-```
+**2. Install dependencies**
+```bash
 npm install
 ```
 
-3. Create a `.env` file in the root folder
+**3. Create a `.env` file in the root folder**
 ```
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 PORT=3000
 ```
 
-4. Start the development server
-```
+**4. Start the development server**
+```bash
 npm run dev
 ```
 
 The API will be running at `http://localhost:3000`.
+
+---
+
+## Project Structure
+```
+payrail-api/
+├── src/
+│   ├── config/         # Database connection
+│   ├── controllers/    # Route handlers
+│   ├── middleware/     # Auth and error handling
+│   ├── models/         # Mongoose schemas
+│   └── routes/         # API routes
+├── docs/               # Documentation
+├── postman/            # Postman collection
+└── server.js           # Entry point
+```
+
+---
+
+## License
+
+MIT
