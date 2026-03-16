@@ -1,9 +1,15 @@
 const Transaction = require('../models/Transaction');
 const IdempotencyKey = require('../models/IdempotencyKey');
+const { validationResult } = require('express-validator');
 
 
 const createTransaction = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const key = req.headers['idempotency-key'];
 
         if (key) {

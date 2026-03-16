@@ -1,7 +1,12 @@
 const Customer = require('../models/Customer');
+const { validationResult } = require('express-validator');
 
 const createCustomer = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         const customer = new Customer(req.body);
         await customer.save();
         res.status(201).json(customer);
