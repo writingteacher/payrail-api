@@ -1,9 +1,26 @@
 const Transaction = require('../models/Transaction');
+const IdempotencyKey = require('../models/IdempotencyKey');
+
+const IdempotencyKey = require('../models/IdempotencyKey');
 
 const createTransaction = async (req, res, next) => {
     try {
+        const key = req.headers['idempotency-key'];
+
+        if (key) {
+            const existing = await IdempotencyKey.findOne({ key });
+            if (existing) {
+                return res.status(200).json(existing.response);
+            }
+        }
+
         const transaction = new Transaction(req.body);
         await transaction.save();
+
+        if (key) {
+            await IdempotencyKey.create({ key, response: transaction.toObject() });
+        }
+
         res.status(201).json(transaction);
     } catch (error) {
         next(error);
