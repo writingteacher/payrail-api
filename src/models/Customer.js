@@ -25,9 +25,13 @@ const customerSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+    deletedAt: {
+        type: Date,
+        default: null
+    }
 });
 
-customerSchema.methods.toJSON = function() {
+customerSchema.methods.toJSON = function () {
     const customer = this.toObject();
     delete customer.password;
     return customer;

@@ -7,6 +7,7 @@ const customerRoutes = require('./routes/customers');
 const paymentMethodRoutes = require('./routes/paymentMethods');
 const transactionRoutes = require('./routes/transactions');
 const refundRoutes = require('./routes/refunds');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 
@@ -14,6 +15,13 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // max 100 requests per IP per window
+    message: { message: 'Too many requests, please try again later.' }
+});
+
+app.use('/api/', limiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/payment-methods', paymentMethodRoutes);
