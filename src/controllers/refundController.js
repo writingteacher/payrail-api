@@ -12,10 +12,26 @@ const createRefund = async (req, res, next) => {
 
 const getRefunds = async (req, res, next) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const total = await Refund.countDocuments();
         const refunds = await Refund.find()
             .populate('customer', 'name email')
-            .populate('transaction', 'amount status');
-        res.status(200).json(refunds);
+            .populate('transaction', 'amount status')
+            .skip(skip)
+            .limit(limit);
+
+        res.status(200).json({
+            data: refunds,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        });
     } catch (error) {
         next(error);
     }

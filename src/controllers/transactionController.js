@@ -12,10 +12,26 @@ const createTransaction = async (req, res, next) => {
 
 const getTransactions = async (req, res, next) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const total = await Transaction.countDocuments();
         const transactions = await Transaction.find()
             .populate('customer', 'name email')
-            .populate('paymentMethod', 'type last4');
-        res.status(200).json(transactions);
+            .populate('paymentMethod', 'type last4')
+            .skip(skip)
+            .limit(limit);
+
+        res.status(200).json({
+            data: transactions,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        });
     } catch (error) {
         next(error);
     }
