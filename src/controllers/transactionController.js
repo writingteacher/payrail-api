@@ -9,7 +9,7 @@ const createTransaction = async (req, res, next) => {
         if (key) {
             const existing = await IdempotencyKey.findOne({ key });
             if (existing) {
-                return res.status(200).json(existing.response);
+                return res.status(200).json({ ...existing.response, idempotent_replay: true });
             }
         }
 
