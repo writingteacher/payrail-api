@@ -1,7 +1,6 @@
 const Transaction = require('../models/Transaction');
 const IdempotencyKey = require('../models/IdempotencyKey');
 
-const IdempotencyKey = require('../models/IdempotencyKey');
 
 const createTransaction = async (req, res, next) => {
     try {
