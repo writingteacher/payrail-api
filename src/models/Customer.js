@@ -27,4 +27,10 @@ const customerSchema = new mongoose.Schema({
     }
 });
 
+customerSchema.methods.toJSON = function() {
+    const customer = this.toObject();
+    delete customer.password;
+    return customer;
+};
+
 module.exports = mongoose.model('Customer', customerSchema);
