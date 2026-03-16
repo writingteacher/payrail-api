@@ -32,8 +32,16 @@ const getTransactions = async (req, res, next) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const total = await Transaction.countDocuments();
-        const transactions = await Transaction.find()
+        const filter = {};
+        if (req.query.startDate) {
+            filter.createdAt = { ...filter.createdAt, $gte: new Date(req.query.startDate) };
+        }
+        if (req.query.endDate) {
+            filter.createdAt = { ...filter.createdAt, $lte: new Date(req.query.endDate) };
+        }
+
+        const total = await Transaction.countDocuments(filter);
+        const transactions = await Transaction.find(filter)
             .populate('customer', 'name email')
             .populate('paymentMethod', 'type last4')
             .skip(skip)
