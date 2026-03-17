@@ -8,6 +8,20 @@ A fintech payments REST API built with Node.js, Express, and MongoDB. Payrail en
 
 ---
 
+## About This Project
+
+Payrail is a portfolio project designed and built by [Rob Whyte](https://github.com/writingteacher) to demonstrate end-to-end API design, development, and documentation skills.
+
+**My role:**
+- Designed the API architecture and resource structure
+- Built the API in Node.js, Express, and MongoDB
+- Implemented production-grade features including JWT authentication, pagination, idempotency key enforcement, rate limiting, soft deletes, and input validation
+- Wrote the full documentation suite — quickstart, API reference, tutorials, code examples, and error reference — modelled on Stripe and PayPal standards
+- Deployed the API on Render and the documentation site on GitHub Pages using Docusaurus
+
+The goal was not just to build an API, but to document it the way a senior technical writer would in a real fintech company.
+```
+
 ## Overview
 
 Payrail is a portfolio project built to demonstrate fintech API design and documentation. It follows industry best practices including:
