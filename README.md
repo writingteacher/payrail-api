@@ -20,7 +20,7 @@ Payrail is a portfolio project designed and built by [Rob Whyte](https://github.
 - Deployed the API on Render and the documentation site on GitHub Pages using Docusaurus
 
 The goal was not just to build an API, but to document it the way a senior technical writer would in a real fintech company.
-```
+
 
 ## Overview
 
@@ -33,7 +33,6 @@ Payrail is a portfolio project built to demonstrate fintech API design and docum
 - Structured error responses with error types and codes
 - Asynchronous transaction processing with status lifecycle management
 
----
 
 ## Base URL
 ```
