@@ -83,7 +83,7 @@ curl -X POST https://payrail-api.onrender.com/api/auth/register \
 | [Postman Collection](postman/payrail-api.postman_collection.json) | Import into Postman to test all endpoints |
 | [Tutorial: Process Your First Payment](docs/tutorials/process-first-payment.md) | End-to-end payment walkthrough |
 | [Tutorial: Handle a Failed Transaction](docs/tutorials/handle-failed-transaction.md) | Detect, understand, and retry failed payments |
-[Postman Collection](https://www.postman.com/techcomteacher99-7835706/workspace/payrail-api/collection/53069530-700ccabf-377e-47c2-9513-f36683e4777f?action=share&source=copy-link&creator=53069530) — open directly in Postman Web
+| [Postman Collection](https://www.postman.com/techcomteacher99-7835706/workspace/payrail-api/collection/53069530-700ccabf-377e-47c2-9513-f36683e4777f?action=share&source=copy-link&creator=53069530) | Open directly in Postman Web |
 | [Postman Environment](postman/payrail-api.postman_environment.json) | Import into Postman for pre-configured variables |
 | [FAQ](docs/faq.md) | Frequently asked questions |
 | [OpenAPI Spec](openapi.yaml) | Machine-readable API specification — [view interactive docs](https://editor.swagger.io/?url=https://raw.githubusercontent.com/writingteacher/payrail-api/master/openapi.yaml) |
