@@ -1,4 +1,5 @@
 const Refund = require('../models/Refund');
+const { sendWebhook } = require('../utils/webhook');
 
 const createRefund = async (req, res, next) => {
     try {
@@ -25,12 +26,7 @@ const getRefunds = async (req, res, next) => {
 
         res.status(200).json({
             data: refunds,
-            pagination: {
-                total,
-                page,
-                limit,
-                totalPages: Math.ceil(total / limit)
-            }
+            pagination: { total, page, limit, totalPages: Math.ceil(total / limit) }
         });
     } catch (error) {
         next(error);
@@ -51,8 +47,20 @@ const getRefundById = async (req, res, next) => {
 
 const updateRefund = async (req, res, next) => {
     try {
-        const refund = await Refund.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const refund = await Refund.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
         if (!refund) return res.status(404).json({ message: 'Refund not found' });
+
+        // Fire webhook on status change
+        if (req.body.status === 'processed') {
+            await sendWebhook('refund.processed', refund.toObject());
+        } else if (req.body.status === 'rejected') {
+            await sendWebhook('refund.rejected', refund.toObject());
+        }
+
         res.status(200).json(refund);
     } catch (error) {
         next(error);

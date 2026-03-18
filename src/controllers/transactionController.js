@@ -1,7 +1,7 @@
 const Transaction = require('../models/Transaction');
 const IdempotencyKey = require('../models/IdempotencyKey');
 const { validationResult } = require('express-validator');
-
+const { sendWebhook } = require('../utils/webhook');
 
 const createTransaction = async (req, res, next) => {
     try {
@@ -55,12 +55,7 @@ const getTransactions = async (req, res, next) => {
 
         res.status(200).json({
             data: transactions,
-            pagination: {
-                total,
-                page,
-                limit,
-                totalPages: Math.ceil(total / limit)
-            }
+            pagination: { total, page, limit, totalPages: Math.ceil(total / limit) }
         });
     } catch (error) {
         next(error);
@@ -81,8 +76,20 @@ const getTransactionById = async (req, res, next) => {
 
 const updateTransaction = async (req, res, next) => {
     try {
-        const transaction = await Transaction.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const transaction = await Transaction.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
         if (!transaction) return res.status(404).json({ message: 'Transaction not found' });
+
+        // Fire webhook on status change
+        if (req.body.status === 'completed') {
+            await sendWebhook('payment.succeeded', transaction.toObject());
+        } else if (req.body.status === 'failed') {
+            await sendWebhook('payment.failed', transaction.toObject());
+        }
+
         res.status(200).json(transaction);
     } catch (error) {
         next(error);
